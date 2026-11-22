@@ -23,7 +23,7 @@
       <!-- Cart items injected by JS -->
     </div>
 
-    <div class="cart-summary">
+    <div id="cart-summary" class="cart-summary">
       <h3 class="text-[#1f2933] font-heading font-bold mb-6">Order Summary</h3>
       <div class="summary-row">
         <span>Subtotal</span>
@@ -41,7 +41,7 @@
 
     <div class="mt-6 flex flex-col sm:flex-row gap-3">
       <a href="shop.html" class="btn btn-secondary w-full sm:w-auto flex-1">Continue Shopping</a>
-      <button id="checkout-btn" class="btn btn-primary w-full sm:w-auto flex-1" onclick="location.href='checkout.html'">Checkout</button>
+      <button id="checkout-btn" class="btn btn-primary w-full sm:w-auto flex-1" onclick="location.href='checkout.html'" disabled>Checkout</button>
     </div>
   </section>
 
@@ -50,11 +50,17 @@
   <script src="js/nav.js"></script>
   <script src="js/cart.js"></script>
   <script>
+    const FREE_SHIPPING_THRESHOLD = 100;
+    const SHIPPING_COST = 12;
+
     function renderCart() {
       const container = document.getElementById('cart-items-container');
       const cart = getCart();
       const subtotalEl = document.getElementById('cart-subtotal');
+      const shippingEl = document.getElementById('cart-shipping');
       const totalEl = document.getElementById('cart-total');
+      const checkoutBtn = document.getElementById('checkout-btn');
+      const summaryEl = document.getElementById('cart-summary');
 
       if (cart.length === 0) {
         container.innerHTML = `
@@ -65,12 +71,15 @@
           </div>
         `;
         subtotalEl.textContent = '$0';
+        shippingEl.textContent = 'Free';
         totalEl.textContent = '$0';
-        document.getElementById('checkout-btn').disabled = true;
+        checkoutBtn.disabled = true;
+        summaryEl.style.display = 'none';
         return;
       }
 
-      document.getElementById('checkout-btn').disabled = false;
+      checkoutBtn.disabled = false;
+      summaryEl.style.display = 'block';
 
       let subtotal = 0;
       let html = `
@@ -106,7 +115,7 @@
                 <button class="qty-btn" onclick="updateQty('${item.id}', ${item.qty + 1}); renderCart();">&#43;</button>
               </div>
             </td>
-            <td class="cart-item-price font-semibold">$${itemTotal}</td>
+            <td class="cart-item-price font-semibold">$${itemTotal.toFixed(2)}</td>
             <td>
               <button class="remove-item" onclick="removeFromCart('${item.id}'); renderCart();">Remove</button>
             </td>
@@ -117,8 +126,12 @@
       html += `</tbody></table>`;
       container.innerHTML = html;
 
+      const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
+      const total = subtotal + shipping;
+
       subtotalEl.textContent = '$' + subtotal.toFixed(2);
-      totalEl.textContent = '$' + subtotal.toFixed(2);
+      shippingEl.textContent = shipping === 0 ? 'Free' : '$' + shipping.toFixed(2);
+      totalEl.textContent = '$' + total.toFixed(2);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
