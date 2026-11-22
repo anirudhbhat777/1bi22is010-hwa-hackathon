@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Sniffscape</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Fraunces:wght@600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/extra.css">
+</head>
+<body class="antialiased bg-[#faf7f2] text-[#1f2933]">
+  <div id="site-header"></div>
+
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-head" style="max-width:none; margin-bottom:2rem;">
+        <span class="section-kicker">Get in touch</span>
+        <h2 class="text-[#1f2933] font-heading font-bold mb-2">We'd love to hear from you</h2>
+      </div>
+      <div class="max-w-2xl">
+        <form id="contact-form" class="checkout-form" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" id="name" placeholder="Your name" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" placeholder="you@example.com" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" placeholder="How can we help?" required>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" rows="5" placeholder="Tell us about your dog..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary w-full">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer"></div>
+
+  <script src="js/nav.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      showToast('Message sent. We\'ll reply soon.');
+      this.reset();
+    });
+  </script>
+</body>
+</html>
