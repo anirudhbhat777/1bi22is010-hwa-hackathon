@@ -25,22 +25,33 @@
             <div class="form-group">
               <label for="name">Name</label>
               <input type="text" id="name" placeholder="Your name" required>
+              <p class="text-xs text-[#ef4444] mt-1 hidden" id="err-name">Name is required</p>
             </div>
             <div class="form-group">
               <label for="email">Email</label>
               <input type="email" id="email" placeholder="you@example.com" required>
+              <p class="text-xs text-[#ef4444] mt-1 hidden" id="err-email">Valid email is required</p>
             </div>
           </div>
           <div class="form-group">
             <label for="subject">Subject</label>
             <input type="text" id="subject" placeholder="How can we help?" required>
+            <p class="text-xs text-[#ef4444] mt-1 hidden" id="err-subject">Subject is required</p>
           </div>
           <div class="form-group">
             <label for="message">Message</label>
             <textarea id="message" rows="5" placeholder="Tell us about your dog..." required></textarea>
+            <p class="text-xs text-[#ef4444] mt-1 hidden" id="err-message">Message is required</p>
           </div>
           <button type="submit" class="btn btn-primary w-full">Send Message</button>
         </form>
+        <div id="contact-success" class="mt-6 hidden">
+          <div class="bg-[#4d7c58]/10 border border-[#4d7c58]/20 rounded-xl p-6 text-center">
+            <span class="text-[#4d7c58] font-bold text-2xl mb-3 block">&#10003;</span>
+            <h3 class="text-[#1f2933] font-heading font-bold mb-2">Message Sent</h3>
+            <p class="text-[#4b5563]">Thank you for reaching out. We'll get back to you soon.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -50,10 +61,56 @@
   <script src="js/nav.js"></script>
   <script src="js/cart.js"></script>
   <script>
-    document.getElementById('contact-form').addEventListener('submit', function(e) {
+    const form = document.getElementById('contact-form');
+    const success = document.getElementById('contact-success');
+    const fields = [
+      { id: 'name', err: 'err-name', required: true },
+      { id: 'email', err: 'err-email', required: true },
+      { id: 'subject', err: 'err-subject', required: true },
+      { id: 'message', err: 'err-message', required: true },
+    ];
+
+    function showError(id, show) {
+      const el = document.getElementById(id);
+      if (show) el.classList.remove('hidden');
+      else el.classList.add('hidden');
+    }
+
+    function validate() {
+      let valid = true;
+      fields.forEach(f => {
+        const el = document.getElementById(f.id);
+        if (!el.value.trim()) {
+          showError(f.err, true);
+          valid = false;
+        } else {
+          showError(f.err, false);
+        }
+      });
+      const email = document.getElementById('email').value.trim();
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError('err-email', true);
+        valid = false;
+      }
+      return valid;
+    }
+
+    form.addEventListener('submit', function(e) {
       e.preventDefault();
-      showToast('Message sent. We\'ll reply soon.');
-      this.reset();
+      if (!validate()) {
+        showToast('Please complete all fields correctly.');
+        return;
+      }
+      form.classList.add('hidden');
+      success.classList.remove('hidden');
+      showToast('Message sent successfully.');
+    });
+
+    document.querySelectorAll('input, textarea').forEach(input => {
+      input.addEventListener('input', () => {
+        const errId = 'err-' + input.id;
+        if (document.getElementById(errId)) showError(errId, false);
+      });
     });
   </script>
 </body>
