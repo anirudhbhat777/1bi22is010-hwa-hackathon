@@ -15,9 +15,26 @@
 
   <section class="product-hero">
     <div class="product-hero-inner">
-      <div class="product-image-large">
-        <img src="images/hero.jpg" alt="Sniffscape Infinity foraging landscape" class="image-cover" onerror="this.parentElement.innerHTML='<div class=\"image-block\" style=\"height:100%;width:100%\"><span>Product image unavailable</span></div>'">
+      <div class="product-gallery">
+        <div class="gallery-main" style="height:560px; border-radius:12px; overflow:hidden; border:1px solid rgba(31,41,51,0.08); position:relative; background:#fff;">
+          <img id="main-image" src="images/hero.jpg" alt="Sniffscape Infinity foraging landscape" class="image-cover" onerror="this.parentElement.innerHTML='<div class=\"image-block\" style=\"height:100%;width:100%\"><span>Product image unavailable</span></div>'">
+        </div>
+        <div class="gallery-thumbs mt-4 grid grid-cols-4 gap-2" style="display:none;">
+          <button class="thumb-btn h-24 rounded-lg border border-[#1f2933]/10 overflow-hidden" onclick="setMainImage('images/hero.jpg', this)">
+            <img src="images/hero.jpg" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<div class=\"w-full h-full image-block\" style=\"background:#8fa791\"></div>'">
+          </button>
+          <button class="thumb-btn h-24 rounded-lg border border-[#1f2933]/10 overflow-hidden" onclick="setMainImage('images/refill.jpg', this)">
+            <img src="images/refill.jpg" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<div class=\"w-full h-full image-block\" style=\"background:#8fa791\"></div>'">
+          </button>
+          <button class="thumb-btn h-24 rounded-lg border border-[#1f2933]/10 overflow-hidden" onclick="setMainImage('images/topper.jpg', this)">
+            <img src="images/topper.jpg" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<div class=\"w-full h-full image-block\" style=\"background:#8fa791\"></div>'">
+          </button>
+          <button class="thumb-btn h-24 rounded-lg border border-[#1f2933]/10 overflow-hidden" onclick="setMainImage('images/hero.jpg', this)">
+            <img src="images/hero.jpg" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<div class=\"w-full h-full image-block\" style=\"background:#8fa791\"></div>'">
+          </button>
+        </div>
       </div>
+
       <div class="product-content">
         <span class="text-xs font-bold tracking-wider text-[#4d7c58] uppercase block mb-2">New arrival</span>
         <h1 class="text-[#1f2933] font-heading font-bold text-3xl md:text-4xl leading-tight tracking-tight mb-4">Sniffscape Infinity</h1>
@@ -25,22 +42,57 @@
         <span class="product-price-large block">$149</span>
         <p class="product-claim">A new long-session foraging landscape that keeps your dog engaged for hours while owners are away. Massively better than mats and Kongs — those are finished in minutes and then ignored.</p>
 
-        <div class="product-actions-large">
-          <button class="btn btn-primary flex-1 md:flex-auto" onclick="addToCart('sniffscape-infinity', parseInt(document.getElementById('qty').value))">Add to Cart</button>
-        </div>
-
         <div class="qty-selector">
-          <label for="qty">Quantity</label>
-          <input type="number" id="qty" value="1" min="1" max="10">
+          <label for="product-qty">Quantity</label>
+          <div class="flex items-center gap-2 mt-1">
+            <button type="button" class="w-10 h-10 rounded-lg border border-[#1f2933]/15 bg-white flex items-center justify-center" onclick="changeQty(-1)">−</button>
+            <input type="number" id="product-qty" value="1" min="1" max="10" class="w-16 h-10 border border-[#1f2933]/15 rounded-lg px-3 text-center text-[#1f2933] focus:outline-none focus:border-[#4d7c58]">
+            <button type="button" class="w-10 h-10 rounded-lg border border-[#1f2933]/15 bg-white flex items-center justify-center" onclick="changeQty(1)">+</button>
+          </div>
         </div>
 
-        <div class="product-meta">
+        <div class="product-actions-large">
+          <button class="btn btn-primary flex-1 md:flex-auto" onclick="addToBag()">Add to Bag</button>
+          <button class="btn btn-terracotta flex-1 md:flex-auto" onclick="buyNow()">Buy Now</button>
+        </div>
+
+        <div class="product-meta mt-8">
           <p><strong>Price:</strong> $149 USD</p>
           <p><strong>Product ID:</strong> sniffscape-infinity</p>
           <p><strong>Includes:</strong> One Sniffscape Infinity landscape + starter scent kit</p>
         </div>
 
         <p class="mt-6 text-sm text-[#6b7280]">Pair with the Refill Scent Kit ($29) or Slow Feed Topper ($19) to extend foraging time.</p>
+
+        <div class="accordion mt-12">
+          <div class="accordion-item border-b border-[#1f2933]/10">
+            <button class="accordion-btn w-full flex justify-between items-center py-4 text-left" onclick="toggleAccordion(this)">
+              <span class="font-semibold text-[#1f2933]">What's included</span>
+              <span class="accordion-icon text-[#4d7c58] font-bold">+</span>
+            </button>
+            <div class="accordion-panel overflow-hidden" style="max-height:0;">
+              <p class="text-[#4b5563] pb-4">Sniffscape Infinity landscape, starter scent kit, and care guide. Refill kits sold separately.</p>
+            </div>
+          </div>
+          <div class="accordion-item border-b border-[#1f2933]/10">
+            <button class="accordion-btn w-full flex justify-between items-center py-4 text-left" onclick="toggleAccordion(this)">
+              <span class="font-semibold text-[#1f2933]">How long does it last?</span>
+              <span class="accordion-icon text-[#4d7c58] font-bold">+</span>
+            </button>
+            <div class="accordion-panel overflow-hidden" style="max-height:0;">
+              <p class="text-[#4b5563] pb-4">Designed to keep dogs foraging for hours, not minutes. Scent longevity depends on use; refresh with the Refill Scent Kit.</p>
+            </div>
+          </div>
+          <div class="accordion-item border-b border-[#1f2933]/10">
+            <button class="accordion-btn w-full flex justify-between items-center py-4 text-left" onclick="toggleAccordion(this)">
+              <span class="font-semibold text-[#1f2933]">Care & cleaning</span>
+              <span class="accordion-icon text-[#4d7c58] font-bold">+</span>
+            </button>
+            <div class="accordion-panel overflow-hidden" style="max-height:0;">
+              <p class="text-[#4b5563] pb-4">Spot clean with mild soap and water. Air dry fully before reuse.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -48,31 +100,31 @@
   <section class="section">
     <div class="section-inner">
       <div class="section-head" style="text-align:left; max-width:none; margin:0 0 2rem;">
-        <span class="section-kicker">Goes well with</span>
-        <h2 class="text-[#1f2933] font-heading font-bold mb-2">Complete the set</h2>
+        <span class="section-kicker">Complete the set</span>
+        <h2 class="text-[#1f2933] font-heading font-bold mb-2">Goes well with</h2>
       </div>
       <div class="product-grid">
         <div class="product-card">
-          <div class="product-image" style="height:320px;">
+          <div class="product-image" style="height:360px;">
             <img src="images/refill.jpg" alt="Refill Scent Kit" class="image-cover" onerror="this.parentElement.innerHTML='<div class=\"image-block\" style=\"height:100%;width:100%\"><span>Image unavailable</span></div>'">
           </div>
           <div class="product-info">
             <div class="product-name">Refill Scent Kit</div>
             <div class="product-price">$29</div>
             <div class="product-actions">
-              <button class="btn btn-primary w-full" onclick="addToCart('refill-kit', 1)">Add to Cart</button>
+              <button class="btn btn-primary w-full" onclick="addToCart('refill-kit', 1)">Add to Bag</button>
             </div>
           </div>
         </div>
         <div class="product-card">
-          <div class="product-image" style="height:320px;">
+          <div class="product-image" style="height:360px;">
             <img src="images/topper.jpg" alt="Slow Feed Topper" class="image-cover" onerror="this.parentElement.innerHTML='<div class=\"image-block\" style=\"height:100%;width:100%\"><span>Image unavailable</span></div>'">
           </div>
           <div class="product-info">
             <div class="product-name">Slow Feed Topper</div>
             <div class="product-price">$19</div>
             <div class="product-actions">
-              <button class="btn btn-primary w-full" onclick="addToCart('topper', 1)">Add to Cart</button>
+              <button class="btn btn-primary w-full" onclick="addToCart('topper', 1)">Add to Bag</button>
             </div>
           </div>
         </div>
@@ -84,5 +136,52 @@
 
   <script src="js/nav.js"></script>
   <script src="js/cart.js"></script>
+  <script>
+    let currentQty = 1;
+
+    function changeQty(delta) {
+      const input = document.getElementById('product-qty');
+      let val = parseInt(input.value) || 1;
+      val = Math.max(1, Math.min(10, val + delta));
+      input.value = val;
+      currentQty = val;
+    }
+
+    function setMainImage(src, btn) {
+      const img = document.getElementById('main-image');
+      img.src = src;
+      document.querySelectorAll('.thumb-btn').forEach(b => b.classList.remove('ring-2', 'ring-[#4d7c58]'));
+      btn.classList.add('ring-2', 'ring-[#4d7c58]');
+    }
+
+    function addToBag() {
+      addToCart('sniffscape-infinity', currentQty);
+    }
+
+    function buyNow() {
+      addToCart('sniffscape-infinity', currentQty);
+      setTimeout(() => { location.href = 'checkout.html'; }, 400);
+    }
+
+    function toggleAccordion(btn) {
+      const panel = btn.nextElementSibling;
+      const icon = btn.querySelector('.accordion-icon');
+      const open = panel.style.maxHeight && panel.style.maxHeight !== '0px';
+      if (open) {
+        panel.style.maxHeight = '0';
+        icon.textContent = '+';
+      } else {
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+        icon.textContent = '−';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const qtyInput = document.getElementById('product-qty');
+      qtyInput.addEventListener('change', () => {
+        currentQty = Math.max(1, Math.min(10, parseInt(qtyInput.value) || 1));
+      });
+    });
+  </script>
 </body>
 </html>
