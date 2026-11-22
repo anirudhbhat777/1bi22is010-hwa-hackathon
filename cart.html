@@ -102,7 +102,7 @@
         html += `
           <tr class="cart-item-row">
             <td class="cart-item-image">
-              <img src="${item.image}" alt="${item.name}" class="image-cover" onerror="this.parentElement.innerHTML='<div class=\"image-block\" style=\"height:100%;width:100%\"><span style=\"color:white\">Image unavailable</span></div>'">
+              <img src="${item.image}" alt="${item.name}" class="image-cover" onerror="this.parentElement.innerHTML='<span>Image unavailable</span>'">
             </td>
             <td>
               <div class="cart-item-name">${item.name}</div>
