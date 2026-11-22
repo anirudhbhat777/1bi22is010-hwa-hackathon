@@ -24,30 +24,61 @@
         <div class="form-group">
           <label for="first-name">First Name</label>
           <input type="text" id="first-name" placeholder="First name" required>
+          <p class="text-xs text-[#ef4444] mt-1 hidden" id="err-first-name">First name is required</p>
         </div>
         <div class="form-group">
           <label for="last-name">Last Name</label>
           <input type="text" id="last-name" placeholder="Last name" required>
+          <p class="text-xs text-[#ef4444] mt-1 hidden" id="err-last-name">Last name is required</p>
         </div>
       </div>
       <div class="form-group">
         <label for="email">Email</label>
         <input type="email" id="email" placeholder="you@example.com" required>
+        <p class="text-xs text-[#ef4444] mt-1 hidden" id="err-email">Valid email is required</p>
       </div>
       <div class="form-group">
         <label for="address">Address</label>
         <input type="text" id="address" placeholder="Street address" required>
+        <p class="text-xs text-[#ef4444] mt-1 hidden" id="err-address">Address is required</p>
       </div>
       <div class="form-row">
         <div class="form-group">
           <label for="city">City</label>
           <input type="text" id="city" placeholder="City" required>
+          <p class="text-xs text-[#ef4444] mt-1 hidden" id="err-city">City is required</p>
         </div>
         <div class="form-group">
           <label for="zip">ZIP / Postal Code</label>
           <input type="text" id="zip" placeholder="ZIP" required>
+          <p class="text-xs text-[#ef4444] mt-1 hidden" id="err-zip">ZIP is required</p>
         </div>
       </div>
+
+      <h3 class="text-[#1f2933] font-heading font-bold mb-4 text-lg mt-8">Payment</h3>
+      <div class="form-group">
+        <label for="card-name">Name on Card</label>
+        <input type="text" id="card-name" placeholder="Name on card" required>
+        <p class="text-xs text-[#ef4444] mt-1 hidden" id="err-card-name">Name on card is required</p>
+      </div>
+      <div class="form-group">
+        <label for="card-number">Card Number</label>
+        <input type="text" id="card-number" placeholder="1234 5678 9012 3456" required maxlength="19">
+        <p class="text-xs text-[#ef4444] mt-1 hidden" id="err-card-number">Valid card number is required</p>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="card-expiry">Expiry (MM/YY)</label>
+          <input type="text" id="card-expiry" placeholder="12/30" required maxlength="5">
+          <p class="text-xs text-[#ef4444] mt-1 hidden" id="err-card-expiry">Valid expiry is required</p>
+        </div>
+        <div class="form-group">
+          <label for="card-cvv">CVV</label>
+          <input type="text" id="card-cvv" placeholder="123" required maxlength="3">
+          <p class="text-xs text-[#ef4444] mt-1 hidden" id="err-card-cvv">Valid CVV is required</p>
+        </div>
+      </div>
+
       <div class="order-checkout-summary mb-6">
         <h3 class="text-[#1f2933] font-heading font-bold mb-4 text-lg">Order Summary</h3>
         <div id="checkout-items">
@@ -58,6 +89,7 @@
           <span id="checkout-total">$0</span>
         </div>
       </div>
+
       <button type="submit" class="btn btn-primary w-full py-3">Place Order</button>
     </form>
   </section>
@@ -67,19 +99,23 @@
   <script src="js/nav.js"></script>
   <script src="js/cart.js"></script>
   <script>
+    const FREE_SHIPPING_THRESHOLD = 100;
+    const SHIPPING_COST = 12;
+
     function renderCheckoutItems() {
       const container = document.getElementById('checkout-items');
       const totalEl = document.getElementById('checkout-total');
       const cart = getCart();
+      const submitBtn = document.getElementById('checkout-form').querySelector('button[type="submit"]');
 
       if (cart.length === 0) {
         container.innerHTML = '<p class="text-[#6b7280] text-sm">Your cart is empty.</p>';
         totalEl.textContent = '$0';
-        document.getElementById('checkout-form').querySelector('button[type="submit"]').disabled = true;
+        submitBtn.disabled = true;
         return;
       }
 
-      document.getElementById('checkout-form').querySelector('button[type="submit"]').disabled = false;
+      submitBtn.disabled = false;
 
       let subtotal = 0;
       let html = '';
@@ -88,9 +124,69 @@
         subtotal += itemTotal;
         html += `<div class="summary-row py-2 text-sm"><span>${item.name} × ${item.qty}</span><span>$${itemTotal.toFixed(2)}</span></div>`;
       });
-      html += `<div class="summary-row border-t border-[#1f2933]/10 pt-2 font-semibold"><span>Total</span><span>$${subtotal.toFixed(2)}</span></div>`;
+      const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
+      const total = subtotal + shipping;
+      html += `<div class="summary-row text-sm"><span>Shipping</span><span>${shipping === 0 ? 'Free' : '$' + shipping.toFixed(2)}</span></div>`;
+      html += `<div class="summary-row border-t border-[#1f2933]/10 pt-2 font-semibold"><span>Total</span><span>$${total.toFixed(2)}</span></div>`;
       container.innerHTML = html;
-      totalEl.textContent = '$' + subtotal.toFixed(2);
+      totalEl.textContent = '$' + total.toFixed(2);
+    }
+
+    function showError(id, show) {
+      const el = document.getElementById(id);
+      if (show) el.classList.remove('hidden');
+      else el.classList.add('hidden');
+    }
+
+    function validateForm() {
+      let valid = true;
+      const fields = [
+        { id: 'first-name', err: 'err-first-name' },
+        { id: 'last-name', err: 'err-last-name' },
+        { id: 'email', err: 'err-email' },
+        { id: 'address', err: 'err-address' },
+        { id: 'city', err: 'err-city' },
+        { id: 'zip', err: 'err-zip' },
+        { id: 'card-name', err: 'err-card-name' },
+        { id: 'card-number', err: 'err-card-number' },
+        { id: 'card-expiry', err: 'err-card-expiry' },
+        { id: 'card-cvv', err: 'err-card-cvv' },
+      ];
+      fields.forEach(f => {
+        const el = document.getElementById(f.id);
+        const errEl = document.getElementById(f.err);
+        if (!el.value.trim()) {
+          showError(f.err, true);
+          valid = false;
+        } else {
+          showError(f.err, false);
+        }
+      });
+      // email format
+      const email = document.getElementById('email').value.trim();
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError('err-email', true);
+        valid = false;
+      }
+      // card number simple check (digits and spaces only, 13-19 digits)
+      const cardNum = document.getElementById('card-number').value.replace(/\s/g, '');
+      if (cardNum && (!/^\d{13,19}$/.test(cardNum))) {
+        showError('err-card-number', true);
+        valid = false;
+      }
+      // expiry MM/YY
+      const expiry = document.getElementById('card-expiry').value.trim();
+      if (expiry && !/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiry)) {
+        showError('err-card-expiry', true);
+        valid = false;
+      }
+      // cvv 3 digits
+      const cvv = document.getElementById('card-cvv').value.trim();
+      if (cvv && !/^\d{3}$/.test(cvv)) {
+        showError('err-card-cvv', true);
+        valid = false;
+      }
+      return valid;
     }
 
     document.getElementById('checkout-form').addEventListener('submit', function(e) {
@@ -100,14 +196,40 @@
         showToast('Your cart is empty.');
         return;
       }
+      if (!validateForm()) {
+        showToast('Please complete all fields correctly.');
+        return;
+      }
+
+      const order = {
+        id: 'SN' + Date.now().toString().slice(-6),
+        date: new Date().toISOString(),
+        items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+        subtotal: getSubtotal(),
+        shipping: getSubtotal() >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST,
+        total: getSubtotal() + (getSubtotal() >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST),
+        customer: {
+          firstName: document.getElementById('first-name').value.trim(),
+          lastName: document.getElementById('last-name').value.trim(),
+          email: document.getElementById('email').value.trim(),
+        }
+      };
+
+      sessionStorage.setItem('sniffscape_order', JSON.stringify(order));
       clearCart();
-      showToast('Order placed. Thank you!');
-      setTimeout(() => location.href = 'index.html', 1500);
+      location.href = 'confirmation.html';
     });
 
     document.addEventListener('DOMContentLoaded', () => {
       renderCheckoutItems();
       window.addEventListener('sniffscape-cart-update', renderCheckoutItems);
+      // clear errors on input
+      document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', () => {
+          const errId = 'err-' + input.id;
+          if (document.getElementById(errId)) showError(errId, false);
+        });
+      });
     });
   </script>
 </body>

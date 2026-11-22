@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmation — Sniffscape</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Fraunces:wght@600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/extra.css">
+</head>
+<body class="antialiased bg-[#faf7f2] text-[#1f2933]">
+  <div id="site-header"></div>
+
+  <section class="section">
+    <div class="section-inner">
+      <div class="max-w-2xl mx-auto">
+        <div class="text-center mb-10">
+          <div class="w-16 h-16 rounded-full bg-[#4d7c58]/10 flex items-center justify-center mx-auto mb-4">
+            <span class="text-[#4d7c58] font-bold text-2xl">&#10003;</span>
+          </div>
+          <h1 class="text-[#1f2933] font-heading font-bold text-3xl mb-3">Order Confirmed</h1>
+          <p class="text-[#6b7280]">Thank you for your order. Your dogs will thank you too.</p>
+        </div>
+
+        <div id="confirmation-content">
+          <!-- Injected by JS -->
+        </div>
+
+        <div class="mt-10 text-center">
+          <a href="index.html" class="btn btn-secondary">Continue Shopping</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer"></div>
+
+  <script src="js/nav.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const order = JSON.parse(sessionStorage.getItem('sniffscape_order') || 'null');
+      const container = document.getElementById('confirmation-content');
+
+      if (!order) {
+        container.innerHTML = `
+          <div class="text-center py-10">
+            <h2 class="text-[#1f2933] font-heading font-bold mb-2">No order found</h2>
+            <p class="text-[#6b7280]">Please place an order first.</p>
+            <a href="index.html" class="btn btn-primary mt-4">Start Shopping</a>
+          </div>
+        `;
+        return;
+      }
+
+      const shipping = order.shipping || 0;
+      let itemsHtml = '';
+      order.items.forEach(item => {
+        itemsHtml += `
+          <div class="flex items-center gap-4 py-3 border-b border-[#1f2933]/10">
+            <div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0" style="background:#8fa791; display:flex; align-items:center; justify-content:center; color:#fff; font-size:0.75rem;">
+              ${item.name.slice(0,1).toUpperCase()}
+            </div>
+            <div class="flex-1">
+              <div class="font-semibold text-[#1f2933]">${item.name}</div>
+              <div class="text-sm text-[#6b7280]">$${item.price} × ${item.qty}</div>
+            </div>
+            <div class="font-semibold text-[#1f2933]">$${(item.price * item.qty).toFixed(2)}</div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = `
+        <div class="bg-white border border-[#1f2933]/10 rounded-xl p-6">
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-sm font-semibold text-[#1f2933]">Order ID</span>
+            <span class="text-sm text-[#4b5563] font-mono">#${order.id}</span>
+          </div>
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-sm font-semibold text-[#1f2933]">Date</span>
+            <span class="text-sm text-[#4b5563]">${new Date(order.date).toLocaleDateString()}</span>
+          </div>
+          <div class="flex justify-between items-start mb-6">
+            <span class="text-sm font-semibold text-[#1f2933]">Customer</span>
+            <span class="text-sm text-[#4b5563]">${order.customer.firstName} ${order.customer.lastName}</span>
+          </div>
+
+          <h3 class="font-semibold text-[#1f2933] mb-3">Items</h3>
+          ${itemsHtml}
+
+          <div class="border-t border-[#1f2933]/10 pt-4">
+            <div class="flex justify-between mb-1">
+              <span class="text-sm text-[#4b5563]">Subtotal</span>
+              <span class="text-sm text-[#1f2933]">$${order.subtotal.toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between mb-1">
+              <span class="text-sm text-[#4b5563]">Shipping</span>
+              <span class="text-sm text-[#1f2933]">${shipping === 0 ? 'Free' : '$' + shipping.toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between mt-2 pt-2 border-t border-[#1f2933]/10">
+              <span class="font-bold text-[#1f2933] text-lg">Total</span>
+              <span class="font-bold text-[#1f2933] text-lg">$${order.total.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-6 text-xs text-[#9ca3af] text-center">This was a test order. No card was actually charged.</p>
+      `;
+
+      sessionStorage.removeItem('sniffscape_order');
+    });
+  </script>
+</body>
+</html>
